@@ -1,0 +1,101 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: smartBasic
+comment: Modified from the original ASP bundle. Originally modified by Thomas Aylott subtleGradient.com
+file_extensions:
+  - sb
+  - sblib
+scope: source.sb
+contexts:
+  main:
+    - match: \n
+      scope: meta.ending-space
+    - include: scope:^#(?i:\b(include|define)\b)
+    - match: ^(?=\t)
+      push:
+        - meta_scope: meta.leading-space
+        - match: '(?=[^\t])'
+          pop: true
+        - match: (\t)(\t)?
+          captures:
+            1: meta.odd-tab.tabs
+            2: meta.even-tab.tabs
+    - match: ^(?= )
+      push:
+        - meta_scope: meta.leading-space
+        - match: "(?=[^ ])"
+          pop: true
+        - match: (  )(  )?
+          captures:
+            1: meta.odd-tab.spaces
+            2: meta.even-tab.spaces
+    - match: '^\s*(?i:#\s*(include|define).*)$'
+      scope: keyword.control.import
+    - match: '^\s*(?i:onevent\s+(\w+\s+)call\s+(\w+)$)'
+      scope: keyword.control.sb
+      captures:
+        1: event.name.sb
+        2: entity.name.function.sb
+    - match: '^\s*(?i:function|sub\s+)'
+      scope: keyword
+    # - match: '\)\s*(?i:as\s+)(\w+)$'
+    #   scope: keyword.modifier.sb
+    #   captures:
+    #     1: support.type.sb
+    - match: ('|(?i:\/\/))
+      captures:
+        0: punctuation.definition.comment.sb
+      push:
+        - meta_scope: comment.line.apostrophe.sb
+        - match: (?=(\n|%>))
+          pop: true
+    - match: (?i:\b(If|Then|Else|ElseIf|EndIf|While|endwhile|For|To|Each|onevent|waitevent|print|In|Step|Case|Select|EndSelect|Return|Continue|Do|Until|Loop|Next|With|EndWith|Exit Do|Exit For|Exit Function|Exit Property|Exit Sub|endsub|endfunc)\b)
+      scope: keyword.control.sb
+    - match: (?i:\b(Mod|And|Not|Is|Or|Xor|as)\b)
+      scope: keyword.modifier.sb
+    # - match: '(?i:(dim)\s*(?:(\b[a-zA-Z][a-zA-Z0-9]*?\$)\s*(,\s*)*))'
+    #   scope: variable.other.dim.sb
+    #   captures:
+    #     1: storage.type.sb
+    #     2: variable.other.bfeac.sb
+    #     3: meta.separator.comma.sb
+    # - match: '(?i:(dim)\s*(?:(\b[a-zA-Z][a-zA-Z0-9]*?\b)\s*(,\s*)?))'
+    #   scope: variable.other.dim.sb
+    #   captures:
+    #     1: storage.type.sb
+    #     2: variable.other.bfeac.sb
+    #     3: meta.separator.comma.sb
+    - match: (?i:\s*\b(Call|Const|Dim|Redim|Function|Sub|Endsub|EndFunc|as|ByRef|ByVal|Preserve)\b\s*)
+      scope: storage.type.sb
+    - match: '"'
+      captures:
+        0: punctuation.definition.string.begin.sb
+      push:
+        - meta_scope: string.quoted.double.sb
+        - match: '"'
+          captures:
+            0: punctuation.definition.string.end.sb
+          pop: true
+        - match: '""'
+          scope: constant.character.escape.apostrophe.sb
+    - match: '(?i:(\b[a-zA-Z_x7f-xff][a-zA-Z0-9_x7f-xff]*?\$?\s*)(?=\(\)?))'
+      scope: support.function.sb
+      captures:
+        1: entity.name.function.sb
+    # - match: '\b[a-zA-Z_xf-xff][a-zA-Z0-9_xf-xff]*?\$\s*'
+    #   scope: variable.other.sb
+    # - match: '\b[a-zA-Z_xf-xff][a-zA-Z0-9_xf-xff]*?\b\s*'
+    #   scope: variable.other.sb
+    - match: (?i:\b(print|Clear|Flush|Redirect|Write)\b)
+      scope: support.function.sb
+    - match: '(?i:(?<=as )(\b[a-zA-Z_x7f-xff][a-zA-Z0-9_x7f-xff]*?\b))'
+      scope: support.type.sb
+    - match: '-?\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f)?\b'
+      scope: constant.numeric.sb
+    - match: (?i:\s*\b(string|integer)\b\s*)
+      scope: support.type.sb
+    - match: '(?i:((?<=(\+|=|-|\&|\\|/|<|>|\(|,))\s*\b([a-zA-Z_xf-xff][a-zA-Z\$0-9_xf-xff]*?)\b(?!(\(|\.))|\b([a-zA-Z_xf-xff][a-zA-Z\$0-9_xf-xff]*?)\b(?=\s*(\+|=|-|\&|\\|/|<|>|\(|\)))))'
+      scope: variable.other.sb
+    - match: '!|%|&|\*|\-\-|\-|\+\+|\+|~|===|==|=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\|\||\?\:|\*=|/=|%=|\+=|\-=|&=|\^=|\b(void|as)\b'
+      scope: keyword.operator.sb
